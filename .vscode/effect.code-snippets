@@ -19,7 +19,7 @@
 		"prefix": "effect",
 		"scope": "javascript,typescript",
 		"body": [
-			"function $1(wait) {",
+			"function $1(wait=100) {",
 			"  let tempPixels = Array(numberOfPixels).fill([0,0,0])$2",
 			"  if(effectLoop) stop()",
 			"  effectLoop = setInterval(() => {",
