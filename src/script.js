@@ -61,6 +61,7 @@ function cycle(wait) {
   let tempPixels = []
   let angle = 0
 
+  if(effectLoop) stop()
   effectLoop = setInterval(() => {
     angle = angle > 1 ? angle = 0 : angle += 0.01
 
@@ -85,6 +86,24 @@ async function race(wait) {
 }
 // race(1)
 
+async function fire(wait) {
+  let tempPixels = Array(numberOfPixels).fill([0,0,0])
+  let baseFlameColor = [ 230, 60, 180 ] // rbg
+
+  if(effectLoop) stop()
+  effectLoop = setInterval(() => {
+    for(let i = 0; i < numberOfPixels; i++) {
+      tempPixels[i] = baseFlameColor.map((col) => {
+        const flickerAmount = Math.floor(Math.random() * (20 - -20) + -20)
+        return col - flickerAmount > 0 ? col - flickerAmount : 0
+      })
+    }
+
+  setPixels(tempPixels)
+  }, wait)
+}
+// fire(200)
+
 async function sleep(time) {
   return new Promise((res, rej) => {
     setTimeout(() => {
@@ -94,7 +113,7 @@ async function sleep(time) {
 }
 
 function on(bright = brightness) {
-  setPixels(Array(numberOfPixels).fill([
+  return setPixels(Array(numberOfPixels).fill([
     255*(bright),
     255*(bright),
     255*(bright)
@@ -102,7 +121,7 @@ function on(bright = brightness) {
 }
 
 function off() {
-  setPixels(Array(numberOfPixels).fill([0,0,0]))
+  return on(0)
 }
 
 function debug(stuff) {
@@ -116,12 +135,12 @@ function stop() {
 /* rendering */
 function setPixel(index, value) {
   pixels[index] = value
-  render()
+  return render()
 }
 
 function setPixels(inPixels) {
-  inPixels.forEach((pixel, i) => {
-    setPixel(i, pixel)
+  return inPixels.map((pixel, i) => {
+    return setPixel(i, pixel)
   })
 }
 
@@ -138,5 +157,6 @@ function render() {
     let yPos = vertPos*(pixelHeight+padding[1])
     ctx.fillRect(xPos, yPos, pixelHeight, pixelWidth)
   })
+  return pixels
 }
 render()
