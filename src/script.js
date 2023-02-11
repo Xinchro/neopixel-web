@@ -75,17 +75,36 @@ function cycle(wait) {
 }
 // cycle(500)
 
-async function race(wait) {
+function race(wait, bounce) {
   let tempPixels = []
-  for (let i = 0; i < numberOfPixels; i++) {
-    tempPixels[i] = [255, 0, 0]
+  let index = 0
+  let reverse = false
+
+  if(effectLoop) stop()
+  effectLoop = setInterval(() => {
+    tempPixels = Array(98).fill([0, 150, 0])
+    tempPixels[index] = [255, 0, 0]
+    
+    if(reverse && bounce) {
+      if(index-1 > 0) {
+        index = index-1
+      } else {
+        reverse = false
+      }
+    } else {
+      if(index+1 < numberOfPixels) {
+        index = index+1
+      } else {
+        if(!bounce) index = 0
+        reverse = true
+      }
+    }
+
     setPixels(tempPixels)
-    await sleep(wait)
-    tempPixels[i] = [0, 0, 0]
-    setPixels(tempPixels)
-  }
+  }, wait)
 }
-// race(1)
+// race(10, false)
+// race(50, true)
 
 async function fire(wait) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
@@ -104,14 +123,6 @@ async function fire(wait) {
   }, wait)
 }
 // fire(200)
-
-async function sleep(time) {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res()
-    }, time)
-  })
-}
 
 function on(bright = brightness) {
   return setPixels(Array(numberOfPixels).fill([
