@@ -54,7 +54,23 @@ function rainbow(wait) {
     setPixels(tempPixels)
   }, wait)
 }
-// rainbow(1, 0.5)
+// rainbow(1)
+
+function cycle(wait) {
+  let tempPixels = []
+  let angle = 0
+
+  effectLoop = setInterval(() => {
+    angle = angle > 1 ? angle = 0 : angle += 0.01
+
+    for (let pixel=0; pixel<numberOfPixels; pixel++) {
+      tempPixels[pixel] = hslToRgb(angle, 1, brightness)
+    }
+
+    setPixels(tempPixels)
+  }, wait)
+}
+// cycle(500)
 
 async function race(wait) {
   let tempPixels = []
