@@ -92,6 +92,18 @@ async function sleep(time) {
   })
 }
 
+function on(bright = brightness) {
+  setPixels(Array(numberOfPixels).fill([
+    255*(bright),
+    255*(bright),
+    255*(bright)
+  ]))
+}
+
+function off() {
+  setPixels(Array(numberOfPixels).fill([0,0,0]))
+}
+
 function debug(stuff) {
   document.querySelector('#debug').innerText = JSON.stringify(stuff)
 }
