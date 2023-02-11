@@ -5,6 +5,7 @@ const pixelWidth = 10
 const pixelHeight = pixelWidth
 const canvasWidth = 540
 const canvasHeight = 304
+let brightness = 0.5
 let effectLoop
 
 const ctx = neopixels.getContext("2d")
@@ -40,14 +41,14 @@ function hslToRgb(hue, sat, light){
     return [r, b, g]
 }
 
-function rainbow(wait, brightness) {
+function rainbow(wait) {
   let tempPixels = []
   let increment = 100/98/100 // hue range / pixel amount / 100(to get it in 0-1)
   let angle = 0
   effectLoop = setInterval(() => {
     for(let pixel=0;pixel<numberOfPixels; pixel++) {
       angle = angle > 1 ? angle = 0 : angle += increment
-      tempPixels[pixel] = hslToRgb(angle, 1, brightness || 0.5)
+      tempPixels[pixel] = hslToRgb(angle, 1, brightness)
     }
 
     setPixels(tempPixels)
