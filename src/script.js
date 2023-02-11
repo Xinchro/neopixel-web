@@ -49,19 +49,22 @@ function hslToRbg(hue, sat, light){
 // linear rainbow effect
 function rainbow(wait) {
   let tempPixels = []
-  let increment = 100/98/100 // hue range / pixel amount / 100(to get it in 0-1)
+  // i don't know why it's like this
+  // it needs to be reduced in digit length for some reason
+  // 100/98/100 => 0.010204081632653062...
+  let increment = Number(parseFloat(100/98/100).toFixed(10)) // hue range / pixel amount / 100(to get it in 0-1)
   let angle = 0
   if(effectLoop) stop()
   effectLoop = setInterval(() => {
     for(let pixel=0; pixel<numberOfPixels; pixel++) {
-      angle = angle+increment > 1 ? angle = 0 : angle + increment
+      angle = angle+increment > 1 ? 0 : angle + increment
       tempPixels[pixel] = hslToRbg(angle, 1, brightness)
     }
 
     setPixels(tempPixels)
   }, wait)
 }
-// rainbow(1)
+// rainbow(10)
 
 // solid cycling effect
 function cycle(wait) {
@@ -113,7 +116,7 @@ function race(wait, bounce) {
     setPixels(tempPixels)
   }, wait)
 }
-// race(10, false)
+// race(50, false)
 // race(50, true)
 
 // randomly flickers a given color, with a low chance
@@ -133,7 +136,7 @@ function solidFlicker(wait, color=[125,125,125]) {
     setPixels(tempPixels)
   }, wait)
 }
-// solidFlicker(200)
+// solidFlicker(200, [255,100,0])
 
 // randomly flicker to a different color, with a low chance
 function rgbFlicker(wait, color=[125,125,125]) {
