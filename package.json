@@ -1,0 +1,19 @@
+{
+  "name": "neopixel-web",
+  "version": "0.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "start": "npm run watchandserve",
+    "watchandserve": "browser-sync start -c \"bs-config.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "xinchro",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "browser-sync": "^2.27.11",
+    "concurrently": "^7.6.0",
+    "http-server": "^14.1.1",
+    "nodemon": "^2.0.20"
+  }
+}
