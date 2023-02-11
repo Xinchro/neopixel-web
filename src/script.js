@@ -13,7 +13,7 @@ const ctx = neopixels.getContext("2d")
 ctx.canvas.width = canvasWidth
 ctx.canvas.height = canvasHeight
 
-function hslToRgb(hue, sat, light){
+function hslToRbg(hue, sat, light){
     let r, g, b
 
     if(sat == 0){
@@ -50,7 +50,7 @@ function rainbow(wait) {
   effectLoop = setInterval(() => {
     for(let pixel=0;pixel<numberOfPixels; pixel++) {
       angle = angle > 1 ? angle = 0 : angle += increment
-      tempPixels[pixel] = hslToRgb(angle, 1, brightness)
+      tempPixels[pixel] = hslToRbg(angle, 1, brightness)
     }
 
     setPixels(tempPixels)
@@ -67,7 +67,7 @@ function cycle(wait) {
     angle = angle > 1 ? angle = 0 : angle += 0.01
 
     for (let pixel=0; pixel<numberOfPixels; pixel++) {
-      tempPixels[pixel] = hslToRgb(angle, 1, brightness)
+      tempPixels[pixel] = hslToRbg(angle, 1, brightness)
     }
 
     setPixels(tempPixels)
@@ -123,6 +123,29 @@ function solidFlicker(wait, color=[125,125,125]) {
   }, wait)
 }
 // solidFlicker(200)
+
+function rgbFlicker(wait, color=[125,125,125]) {
+  let tempPixels = Array(numberOfPixels).fill(color)
+
+  if(effectLoop) stop()
+  effectLoop = setInterval(() => {
+    const flickerChance = Math.floor(Math.random() * (100 - 0) + 0)
+    for(let i = 0; i < numberOfPixels; i++) {
+      if(flickerChance > 90) {
+        tempPixels[i] = [0,0,0]
+        color = randomColor()
+      } else {
+        tempPixels[i] = color
+      }
+    }
+    setPixels(tempPixels)
+  }, wait)
+}
+// rgbFlicker(200)
+
+function randomColor() {
+  return hslToRbg(Math.random(), 1, 0.5)
+}
 
 async function fire(wait) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
