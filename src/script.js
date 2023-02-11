@@ -165,13 +165,14 @@ async function fire(wait) {
 }
 // fire(200)
 
-function on(bright = brightness) {
+function on(bright=brightness, r=255, g=255, b=255) {
   return setPixels(Array(numberOfPixels).fill([
-    255*(bright),
-    255*(bright),
-    255*(bright)
+    r*(bright),
+    b*(bright),
+    g*(bright)
   ]))
 }
+// on(1, 255, 0, 0)
 
 function off() {
   return on(0)
