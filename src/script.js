@@ -45,6 +45,7 @@ function rainbow(wait) {
   let tempPixels = []
   let increment = 100/98/100 // hue range / pixel amount / 100(to get it in 0-1)
   let angle = 0
+  if(effectLoop) stop()
   effectLoop = setInterval(() => {
     for(let pixel=0;pixel<numberOfPixels; pixel++) {
       angle = angle > 1 ? angle = 0 : angle += increment
@@ -126,13 +127,16 @@ function setPixels(inPixels) {
 
 function render() {
   debug(pixels)
+  const padding = [1, 1]
+  const truePixelWidth = pixelWidth+padding[0]
+  const fit = Math.floor(canvasWidth/truePixelWidth)
   pixels.forEach((pixel, i) => {
+    const vertPos = Math.floor(i/fit)
+
     ctx.fillStyle = `rgb(${pixel[0]},${pixel[2]},${pixel[1]})`
-    if(pixelWidth*i + pixelWidth < canvasWidth) {
-      ctx.fillRect(pixelWidth*i, 0, pixelHeight, pixelWidth)
-    } else {
-      ctx.fillRect(pixelWidth*i - canvasWidth, 20, pixelHeight, pixelWidth)
-    }
+    let xPos = truePixelWidth*i - canvasWidth*vertPos + ((canvasWidth-(truePixelWidth*fit))*vertPos)
+    let yPos = vertPos*(pixelHeight+padding[1])
+    ctx.fillRect(xPos, yPos, pixelHeight, pixelWidth)
   })
 }
 render()
