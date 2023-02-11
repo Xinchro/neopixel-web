@@ -1,18 +1,21 @@
 const neopixels = document.querySelector('#neopixels')
 const debugEl = document.querySelector('#debug')
+let effectLoop
+
+// editable stuff
 const numberOfPixels = 98
 const pixels = Array(numberOfPixels).fill([255,255,255])
 const pixelWidth = 20
 const pixelHeight = pixelWidth
-const canvasWidth = 540
-const canvasHeight = 304
+const canvasWidth = 540 // change css, too
+const canvasHeight = 304 // change css, too
 let brightness = 0.5
-let effectLoop
 
 const ctx = neopixels.getContext("2d")
 ctx.canvas.width = canvasWidth
 ctx.canvas.height = canvasHeight
 
+// pilphered from https://stackoverflow.com/a/9493060 and modified
 function hslToRbg(hue, sat, light){
     let r, g, b
 
@@ -42,14 +45,16 @@ function hslToRbg(hue, sat, light){
     return [r, b, g]
 }
 
+
+// linear rainbow effect
 function rainbow(wait) {
   let tempPixels = []
   let increment = 100/98/100 // hue range / pixel amount / 100(to get it in 0-1)
   let angle = 0
   if(effectLoop) stop()
   effectLoop = setInterval(() => {
-    for(let pixel=0;pixel<numberOfPixels; pixel++) {
-      angle = angle > 1 ? angle = 0 : angle += increment
+    for(let pixel=0; pixel<numberOfPixels; pixel++) {
+      angle = angle+increment > 1 ? angle = 0 : angle + increment
       tempPixels[pixel] = hslToRbg(angle, 1, brightness)
     }
 
@@ -58,13 +63,15 @@ function rainbow(wait) {
 }
 // rainbow(1)
 
+// solid cycling effect
 function cycle(wait) {
   let tempPixels = []
   let angle = 0
+  let increment = 0.01
 
   if(effectLoop) stop()
   effectLoop = setInterval(() => {
-    angle = angle > 1 ? angle = 0 : angle += 0.01
+    angle = angle+increment > 1 ? angle = 0 : angle + increment
 
     for (let pixel=0; pixel<numberOfPixels; pixel++) {
       tempPixels[pixel] = hslToRbg(angle, 1, brightness)
@@ -73,8 +80,9 @@ function cycle(wait) {
     setPixels(tempPixels)
   }, wait)
 }
-// cycle(500)
+// cycle(50)
 
+// travelling red pixel, supports bouncing back and forth
 function race(wait, bounce) {
   let tempPixels = []
   let index = 0
@@ -82,9 +90,11 @@ function race(wait, bounce) {
 
   if(effectLoop) stop()
   effectLoop = setInterval(() => {
-    tempPixels = Array(98).fill([0, 150, 0])
+    // always set everything to black first
+    tempPixels = Array(numberOfPixels).fill([0, 0, 0])
+    // set our single travelling pixel
     tempPixels[index] = [255, 0, 0]
-    
+
     if(reverse && bounce) {
       if(index-1 > 0) {
         index = index-1
@@ -106,6 +116,7 @@ function race(wait, bounce) {
 // race(10, false)
 // race(50, true)
 
+// randomly flickers a given color, with a low chance
 function solidFlicker(wait, color=[125,125,125]) {
   let tempPixels = Array(numberOfPixels).fill(color)
 
@@ -124,6 +135,7 @@ function solidFlicker(wait, color=[125,125,125]) {
 }
 // solidFlicker(200)
 
+// randomly flicker to a different color, with a low chance
 function rgbFlicker(wait, color=[125,125,125]) {
   let tempPixels = Array(numberOfPixels).fill(color)
 
@@ -141,12 +153,14 @@ function rgbFlicker(wait, color=[125,125,125]) {
     setPixels(tempPixels)
   }, wait)
 }
-// rgbFlicker(200)
+// rgbFlicker(100)
 
+// returns a random color in [r,b,g] format
 function randomColor() {
   return hslToRbg(Math.random(), 1, 0.5)
 }
 
+// flickers an orange-y color to represent a fire
 async function fire(wait) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
   let baseFlameColor = [ 230, 60, 180 ] // rbg
@@ -155,7 +169,9 @@ async function fire(wait) {
   effectLoop = setInterval(() => {
     for(let i = 0; i < numberOfPixels; i++) {
       tempPixels[i] = baseFlameColor.map((col) => {
-        const flickerAmount = Math.floor(Math.random() * (20 - -20) + -20)
+        // the amount to deviate from the values in the original color
+        const flickerAmount = Math.floor(Math.random() * (10 - -10) + -10)
+        
         return col - flickerAmount > 0 ? col - flickerAmount : 0
       })
     }
@@ -165,7 +181,8 @@ async function fire(wait) {
 }
 // fire(200)
 
-function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
+// breathes either a single color, or a rotating list
+function breathe(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
   let breatheIn = true
   let increment = 0.01
@@ -175,7 +192,8 @@ function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
   if(effectLoop) stop()
   effectLoop = setInterval(() => {
     angle = colors[colorIndex]
-
+    
+    // calculates the correct brightness for all pixels before sending it to the pixels
     if(breatheIn) {
       if(brightness+increment < light) {
         brightness += increment
@@ -189,9 +207,11 @@ function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
       } else {
         brightness = 0
         breatheIn = true
+        // next color
         colorIndex = colorIndex+1 < colors.length ? colorIndex+1 : 0
       }
     }
+
     for(let i = 0; i < numberOfPixels; i++) {
       tempPixels[i] = hslToRbg(angle, sat, brightness)
     }
@@ -201,6 +221,7 @@ function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
 }
 // breathe(100, [0.8, 0.1])
 
+// turns all the pixels onto the same color
 function on(bright=brightness, r=255, g=255, b=255) {
   return setPixels(Array(numberOfPixels).fill([
     r*(bright),
@@ -210,44 +231,57 @@ function on(bright=brightness, r=255, g=255, b=255) {
 }
 // on(1, 255, 0, 0)
 
+// turns off all the pixels / sets them all to black
 function off() {
   return on(0)
 }
 
+// updates the debug div
 function debug(stuff) {
   debugEl.innerHTML = JSON.stringify(stuff)
 }
 
+// stops the effectLoop interval
 function stop() {
   clearInterval(effectLoop)
 }
 
 /* rendering */
+// sets a given pixel to a given color
 function setPixel(index, value) {
   pixels[index] = value
   return render()
 }
 
+// sets all the pixels to a new array of colors
 function setPixels(inPixels) {
   return inPixels.map((pixel, i) => {
     return setPixel(i, pixel)
   })
 }
 
+// renders the pixel array to the canvas
 function render() {
   debug(pixels)
   const padding = [1, 1]
   const truePixelWidth = pixelWidth+padding[0]
   const fit = Math.floor(canvasWidth/truePixelWidth)
+
   pixels.forEach((pixel, i) => {
     const vertPos = Math.floor(i/fit)
-
+    
+    // set the pixel to its respctive color
     ctx.fillStyle = `rgb(${pixel[0]},${pixel[2]},${pixel[1]})`
 
+    // fills a row of pixels, with any given padding
+    // also calculates any shifting that occures from changing rows (y-axis)
     let xPos = truePixelWidth*i - canvasWidth*vertPos + ((canvasWidth-(truePixelWidth*fit))*vertPos)
+    // calculates the correct row
     let yPos = vertPos*(pixelHeight+padding[1])
     ctx.fillRect(xPos, yPos, pixelHeight, pixelWidth)
   })
   return pixels
 }
+
+// initial render
 render()
