@@ -2,7 +2,7 @@ const neopixels = document.querySelector('#neopixels')
 const debugEl = document.querySelector('#debug')
 const numberOfPixels = 98
 const pixels = Array(numberOfPixels).fill([255,255,255])
-const pixelWidth = 10
+const pixelWidth = 20
 const pixelHeight = pixelWidth
 const canvasWidth = 540
 const canvasHeight = 304
@@ -106,6 +106,24 @@ function race(wait, bounce) {
 // race(10, false)
 // race(50, true)
 
+function solidFlicker(wait, color=[125,125,125]) {
+  let tempPixels = Array(numberOfPixels).fill(color)
+
+  if(effectLoop) stop()
+  effectLoop = setInterval(() => {
+    const flickerChance = Math.floor(Math.random() * (100 - 0) + 0)
+    for(let i = 0; i < numberOfPixels; i++) {
+      if(flickerChance > 90) {
+        tempPixels[i] = [0,0,0]
+      } else {
+        tempPixels[i] = color
+      }
+    }
+    setPixels(tempPixels)
+  }, wait)
+}
+// solidFlicker(200)
+
 async function fire(wait) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
   let baseFlameColor = [ 230, 60, 180 ] // rbg
@@ -165,6 +183,7 @@ function render() {
     const vertPos = Math.floor(i/fit)
 
     ctx.fillStyle = `rgb(${pixel[0]},${pixel[2]},${pixel[1]})`
+
     let xPos = truePixelWidth*i - canvasWidth*vertPos + ((canvasWidth-(truePixelWidth*fit))*vertPos)
     let yPos = vertPos*(pixelHeight+padding[1])
     ctx.fillRect(xPos, yPos, pixelHeight, pixelWidth)
