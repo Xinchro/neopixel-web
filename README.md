@@ -1,5 +1,7 @@
 # Neopixel-web
 
+![Squares, representing pixels, in a linear rainbow pattern](./assets/pixels.png)
+
 ## How2Run
 Install the dependencies with [npm](https://www.npmjs.com/):
 ```
