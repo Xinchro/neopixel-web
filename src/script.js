@@ -1,4 +1,5 @@
 const neopixels = document.querySelector('#neopixels')
+const debugEl = document.querySelector('#debug')
 const numberOfPixels = 98
 const pixels = Array(numberOfPixels).fill([255,255,255])
 const pixelWidth = 10
@@ -125,7 +126,7 @@ function off() {
 }
 
 function debug(stuff) {
-  document.querySelector('#debug').innerText = JSON.stringify(stuff)
+  debugEl.innerHTML = JSON.stringify(stuff)
 }
 
 function stop() {

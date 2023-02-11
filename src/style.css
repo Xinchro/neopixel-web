@@ -15,7 +15,9 @@ html, body {
   max-width: 100%;
   height: auto;
   word-wrap: anywhere;
-  overflow: scroll;
+  overflow: auto;
+  position: fixed;
+  bottom: 0;
 }
 
 #neopixels {
