@@ -165,38 +165,6 @@ async function fire(wait) {
 }
 // fire(200)
 
-function breathe(wait, angle=0, sat=1, light=0.5) {
-  let tempPixels = Array(numberOfPixels).fill([0,0,0])
-  let breatheIn = true
-  let increment = 0.01
-  let brightness = 0
-
-  if(effectLoop) stop()
-  effectLoop = setInterval(() => {
-    if(breatheIn) {
-      if(brightness+increment < light) {
-        brightness += increment
-      } else {
-        brightness = light
-        breatheIn = false
-      }
-    } else {
-      if(brightness-increment > 0) {
-        brightness -= increment
-      } else {
-        brightness = 0
-        breatheIn = true
-      }
-    }
-    for(let i = 0; i < numberOfPixels; i++) {
-      tempPixels[i] = hslToRbg(angle, sat, brightness)
-    }
-
-    setPixels(tempPixels)
-  }, wait)
-}
-// breathe(100, 0, 1, 0.5)
-
 function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
   let tempPixels = Array(numberOfPixels).fill([0,0,0])
   let breatheIn = true
@@ -231,7 +199,7 @@ function breatheFlux(wait, colors=[0, 0.33, 0.66], sat=1 ,light=0.5) {
     setPixels(tempPixels)
   }, wait)
 }
-// breatheFlux(100, [0.8, 0.1])
+// breathe(100, [0.8, 0.1])
 
 function on(bright=brightness, r=255, g=255, b=255) {
   return setPixels(Array(numberOfPixels).fill([
